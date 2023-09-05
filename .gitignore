@@ -1,0 +1,11 @@
+src/submission/omniglot_resized/
+src/submission/omniglot_resized.zip
+src/__pycache__
+omniglot_resized.zip
+logs/
+src/.DS_Store
+.DS_Store
+omniglot_resized/
+src/submission/protonet/
+src/submission/sandbox.ipynb
+.vscode/launch.json

@@ -1,6 +1,7 @@
 """Implementation of prototypical networks for Omniglot."""
 import sys
 sys.path.append('..')
+sys.path.append('/Users/jaime/courses/AI/XCS330/XCS330-PS3/src') ### ADDED FOR LOCAL TESTING!!!
 import argparse
 import os
 
@@ -135,6 +136,39 @@ class ProtoNet:
             labels_query = labels_query.to(self.device)
 
             ### START CODE HERE ###
+            # Compute the prototypes
+            embeddings_support = self._network(images_support)
+            classes = torch.unique(labels_support)
+            prototypes = torch.stack([
+                embeddings_support[labels_support == label].mean(0)                
+                for label in classes
+            ])
+            # Support logits: compute the distance from each support example to each prototype
+            # support logits must be torch.no_grad()
+            with torch.no_grad():
+                distances_support = (embeddings_support.unsqueeze(1) - prototypes.unsqueeze(0))**2
+                distances_support = torch.sum(distances_support, dim=2)
+                #log_p_y_support = -torch.log(distances_support)
+                log_p_y_support = -distances_support
+            # Query logits: compute the distance from each query example to each prototype
+            embeddings_query = self._network(images_query)
+            distances_query = (embeddings_query.unsqueeze(1) - prototypes.unsqueeze(0))**2
+            distances_query = torch.sum(distances_query, dim=2)
+            #log_p_y = -torch.log(distances_query)
+            log_p_y = -distances_query
+            # Compute the loss
+            loss = F.cross_entropy(
+                log_p_y,
+                labels_query)
+            loss_batch.append(loss)
+
+            # Compute the accuracy on the support set using utils.score
+            accuracy_support = util.score(log_p_y_support,labels_support)
+            accuracy_support_batch.append(accuracy_support)
+            
+            # Compute the accuracy on the query set using utils.score
+            accuracy_query = util.score(log_p_y,labels_query)
+            accuracy_query_batch.append(accuracy_query)
             ### END CODE HERE ###
         return (
             torch.mean(torch.stack(loss_batch)),
