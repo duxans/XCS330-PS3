@@ -1,7 +1,7 @@
 """Implementation of prototypical networks for Omniglot."""
 import sys
 sys.path.append('..')
-sys.path.append('/Users/jaime/courses/AI/XCS330/XCS330-PS3/src') ### ADDED FOR LOCAL TESTING!!!
+#sys.path.append('/Users/jaime/courses/AI/XCS330/XCS330-PS3/src') ### ADDED FOR LOCAL TESTING!!!
 import argparse
 import os
 
