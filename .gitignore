@@ -10,3 +10,4 @@ src/submission/protonet/
 src/submission/sandbox.ipynb
 .vscode/launch.json
 Test terminalVM.rtf
+src/submission/__pycache__

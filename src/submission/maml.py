@@ -181,6 +181,15 @@ class MAML:
             for k, v in self._meta_parameters.items()
         }
         ### START CODE HERE ###
+        for i in range(self._num_inner_steps + 1):
+            logits = self._forward(images, parameters)
+            loss = F.cross_entropy(logits, labels)
+            accuracies.append(util.score(logits, labels)) #util has no accuracy function CHANGE
+            gradients = autograd.grad(loss, parameters.values(), create_graph=train)
+            parameters = {
+                k: v - self._inner_lrs[k] * g
+                for k, v, g in zip(parameters.keys(), parameters.values(), gradients)
+            }        
         ### END CODE HERE ###
         return parameters, accuracies, gradients
 
@@ -209,6 +218,12 @@ class MAML:
             images_query = images_query.to(self.device)
             labels_query = labels_query.to(self.device)
             ### START CODE HERE ###
+            parameters, accuracies_support, gradients = self._inner_loop(images_support, labels_support, train)
+            logits = self._forward(images_query, parameters)
+            loss = F.cross_entropy(logits, labels_query)
+            outer_loss_batch.append(loss)
+            accuracy_query_batch.append(util.score(logits, labels_query))
+            accuracies_support_batch.append(accuracies_support)
             ### END CODE HERE ###
         outer_loss = torch.mean(torch.stack(outer_loss_batch))
         accuracies_support = np.mean(
