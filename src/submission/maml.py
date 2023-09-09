@@ -181,10 +181,10 @@ class MAML:
             for k, v in self._meta_parameters.items()
         }
         ### START CODE HERE ###
-        for i in range(self._num_inner_steps + 1):
+        for _ in range(self._num_inner_steps + 1):
             logits = self._forward(images, parameters)
             loss = F.cross_entropy(logits, labels)
-            accuracies.append(util.score(logits, labels)) #util has no accuracy function CHANGE
+            accuracies.append(util.score(logits, labels))
             gradients = autograd.grad(loss, parameters.values(), create_graph=train)
             parameters = {
                 k: v - self._inner_lrs[k] * g
